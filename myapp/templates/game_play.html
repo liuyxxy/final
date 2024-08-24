@@ -1,0 +1,59 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container">
+    <h1>SENTENCE GAME</h1>
+    <div class="game-info">
+        <div class="players">
+            <h3>Players:</h3>
+            <ul>
+                {% for player in players %}
+                    <li>{{ player.username }} {% if player.username == user.username %}(You){% endif %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="game-status">
+            {% if is_first %}
+                <p>Congrats! You are the first!</p>
+            {% else %}
+                <p>Previous Sentence:</p>
+                <div class="sentence-box">{{ previous_sentence }}</div>
+            {% endif %}
+            
+            <form method="POST" action="{% url 'submit_sentence' %}">
+                {% csrf_token %}
+                <label for="sentence">Your Sentence:</label>
+                <input type="text" id="sentence" name="sentence" placeholder="Type your sentence here..." required>
+                <button type="submit">Submit</button>
+            </form>
+            
+            <div class="timer">Time left: {{ time_left }}s</div>
+        </div>
+    </div>
+
+    <p>{{ message }}</p>
+</div>
+
+<script>
+    const roomName = "{{ room_name }}";
+    const username = "{{ username }}";
+    const ws = new WebSocket(`ws://${window.location.host}/ws/game/${roomName}/`);
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log(data.message);
+        // Update the UI based on the received message
+    };
+
+    ws.onclose = function() {
+        console.log("WebSocket connection closed");
+    };
+
+    function sendMessage(message) {
+        ws.send(JSON.stringify({
+            'message': message,
+            'username': username
+        }));
+    }
+</script>
+{% endblock %}

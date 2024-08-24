@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room Detail</title>
+</head>
+<body>
+    <h1>Room: {{ room.id }}</h1>
+    <h2>Players:</h2>
+    <ul id="players-list">
+        {% for player in players %}
+            <li>{{ player.username }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if room.status == 'waiting' %}
+        {% if player.is_host %}
+            <button id="start-game">Start Game</button>
+        {% else %}
+            <p>Waiting for the host to start...</p>
+        {% endif %}
+    {% elif room.status == 'in_progress' %}
+        <p id="game-status">Game in progress...</p>
+    {% elif room.status == 'finished' %}
+        <p>Game has finished.</p>
+    {% endif %}
+
+    <script>
+        const roomId = "{{ room.id }}";
+        const username = "{{ request.GET.username }}";
+        const socket = new WebSocket(`ws://${window.location.host}/ws/room/${roomId}/`);
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.event === 'player_joined') {
+                // Update player list
+                location.reload();
+            }
+            if (data.event === 'game_started') {
+                // Update UI to show game started
+                document.getElementById('game-status').innerText = `Game started! Current player: ${data.current_player}`;
+            }
+            if (data.event === 'next_turn') {
+                // Update UI to show next player's turn
+                document.getElementById('game-status').innerText = `Next turn: ${data.current_player}`;
+            }
+        };
+
+        // Handle start game button click
+        document.getElementById('start-game')?.addEventListener('click', () => {
+            socket.send(JSON.stringify({
+                'action': 'start_game'
+            }));
+        });
+    </script>
+</body>
+</html>

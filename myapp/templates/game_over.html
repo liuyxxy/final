@@ -1,0 +1,17 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container">
+    <h1>SENTENCE GAME</h1>
+    <h2>That's it! Here's your story:</h2>
+    <div class="story-box">
+        <p>{{ story }}</p>
+    </div>
+
+    <h3>Summary:</h3>
+    <ul>
+        {% for player in summary %}
+            <li>{{ player.username }}: {{ player.word_count }} words</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

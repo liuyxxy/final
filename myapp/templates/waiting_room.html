@@ -1,0 +1,75 @@
+{% extends "base.html" %} 
+{% block content %}
+
+<div class="container">
+    <h1>SENTENCE GAME</h1>
+    <div class="input-group">
+        <input type="text" id="game_link" value="{{ game_link }}" readonly>
+        <button onclick="copyLink()">Copy link</button>
+    </div>
+
+    <h3>Players:</h3>
+    <ul>
+        {% for player in players %}
+            <li>{{ player.username }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if is_host %}
+        <button onclick="startGame()">Start Game</button>
+    {% else %}
+        <p>Waiting for the host to start...</p>
+    {% endif %}
+</div>
+
+<script>
+    function copyLink() {
+        var copyText = document.getElementById("game_link");
+        copyText.select();
+        document.execCommand("copy");
+    }
+
+    function startGame() {
+        // Logic to start the game
+        axios.post('/api/start-game/', {
+            room_id: roomId
+        })
+        .then(function (response) {
+            console.log(response.data);
+            window.location.href = `/game/${roomId}/`;
+        })
+        .catch(function (error) {
+            console.error("There was an error starting the game:", error);
+        });
+    }
+</script>
+{% endblock %}
+
+<!-- <h2>Sentence Game</h2>
+    <p>Room: {{ room_name }}</p>
+    <p>Players:</p>
+    <ul id="playersList"></ul>
+    <button id="startGameButton">Start Game</button>
+
+    <script>
+        const roomName = "{{ room_name }}";
+        const ws = new WebSocket(`ws://${window.location.host}/ws/game/${roomName}/`);
+
+        ws.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'player_joined') {
+                const li = document.createElement('li');
+                li.textContent = data.username;
+                document.getElementById('playersList').appendChild(li);
+            } else if (data.type === 'game_start') {
+                window.location.href = `/game_play/${roomName}/`;
+            }
+        };
+
+        document.getElementById('startGameButton').onclick = function() {
+            ws.send(JSON.stringify({
+                'type': 'start_game',
+                'message': 'Game is starting...'
+            }));
+        };
+    </script> -->

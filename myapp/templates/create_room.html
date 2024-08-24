@@ -1,0 +1,55 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container">
+    <h1>SENTENCE GAME</h1>
+    <form id="createRoomForm">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" placeholder="Type username here..." required>
+
+        <h3>Game settings:</h3>
+        <label for="time">Time:</label>
+        <select id="time" name="time">
+            <option value="10">10 secs</option>
+            <option value="20">20 secs</option>
+            <option value="30">30 secs</option>
+            <option value="40">40 secs</option>
+        </select>
+
+        <label for="rounds">Rounds:</label>
+        <input type="number" id="rounds" name="rounds" min="1" required>
+
+        <button type="submit">Create Room</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('createRoomForm').onsubmit = function(event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value;
+        const time = document.getElementById('time').value;
+        const rounds = document.getElementById('rounds').value;
+
+        fetch('{% url "create_room" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                'username': username,
+                'time': time,
+                'rounds': rounds
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = `/waiting_room/${data.room_id}/`;
+            } else {
+                alert('Error creating room.');
+            }
+        });
+    };
+</script>
+{% endblock %}
