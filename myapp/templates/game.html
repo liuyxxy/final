@@ -1,0 +1,21 @@
+{% extends "base.html" %} 
+{% block content %}
+<section class="game-container">
+    <div class="header">
+        <h1>Sentence Game</h1>
+        <div class="round-info">Rounds left: {{ room.total_rounds }}</div>
+    </div>
+    <div class="players-container">
+        <ul class="player-list">
+            {% for player in players %}
+            <li id="player-{{ player.id }}">{{ player.user }}{% if forloop.first %} (You){% endif %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="game-status">
+        <textarea id="prev-sentence" placeholder="Previous Sentence..." disabled></textarea>
+        <textarea id="your-sentence" placeholder="Type your sentence here..."></textarea>
+        <button onclick="">Submit</button>
+    </div>
+</section>
+{% endblock %}
