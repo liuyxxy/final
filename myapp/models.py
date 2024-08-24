@@ -4,7 +4,7 @@ import uuid
 # Create your models here.
 class Room(models.Model):
     room_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    host = models.CharField(max_length=50)
+    host = models.CharField(default='', max_length=50)
     time_limit = models.IntegerField(choices=[(10, '10s'), (20, '20s'), (30, '30s'), (40, '40s')], default=20)
     rounds = models.PositiveIntegerField(default=3)
     created_at = models.DateTimeField(auto_now_add=True)
