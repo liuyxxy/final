@@ -13,7 +13,7 @@ class Room(models.Model):
         return f"Room {self.room_id} hosted by {self.host}"
     
 class Player(models.Model):
-    room = models.ForeignKey(Room, related_name="room_players", on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
     user = models.CharField(max_length=50)
     score = models.PositiveIntegerField(default=0)
 
@@ -21,8 +21,7 @@ class Player(models.Model):
         return f"{self.user} in Room {self.room.room_id}"
 
 class Sentence(models.Model):
-    room = models.ForeignKey(Room, related_name="room_texts", on_delete=models.CASCADE)
-    player = models.ForeignKey(Player, related_name="player_texts", on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
