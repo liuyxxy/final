@@ -1,0 +1,15 @@
+{% extends "base.html" %} 
+{% block content %}
+<div class="container" hx-get="" hx-trigger="every 2s">
+    <h1>Sentence Game</h1>
+    <div class="players-container">
+        <ul class="player-list">
+            {% for player in players %}
+            <li id="player-{{ player.id }}">{{ player.user }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a class="btn btn-primary" href="/game/">Start Story</a>
+</div>
+{% endblock %}
+</html>
